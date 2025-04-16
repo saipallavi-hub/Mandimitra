@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>f-Mandimitra Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #b0cbe2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 150px;
+      height: 150px;
+    }
+
+    .input-field {
+      padding: 10px;
+      width: 270px;
+      border: 1px solid #000;
+      border-radius: 10px;
+      font-size: 16px;
+      margin: 15px 0;
+      text-align: center;
+    }
+
+    .btn {
+      width: 270px;
+      padding: 12px;
+      background-color: #004b8d;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background-color: #003366;
+    }
+
+    .signup {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .signup a {
+      font-weight: bold;
+      color: black;
+      text-decoration: none;
+    }
+
+    .corner-icons {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .voice-icon {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    select {
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Logo" class="logo">
+  
+  <input type="tel" id="mobileNumber" class="input-field" placeholder="Mobile Number" maxlength="10">
+  <button class="btn" onclick="redirectToOtp()">LOGIN</button>
+
+  <div class="signup" id="signupText">
+    NEW MEMBER? <a href="register.html"><b>Register here</b></a>
+  </div>
+
+  <div class="corner-icons">
+    <select id="languageSelector" onchange="changeLanguage(this.value)">
+      <option value="en">🌐 English</option>
+      <option value="hi">🌐 Hindi</option>
+      <option value="te">🌐 Telugu</option>
+    </select>
+  </div>
+
+  <div class="voice-icon" onclick="startVoiceAssistant()">🎤</div>
+
+  <script>
+    const translations = {
+      en: {
+        mobile: "Mobile Number",
+        login: "LOGIN",
+        signup: 'NEW MEMBER? <a href="register.html"><b>Register here</b></a>',
+        voice: "Please enter your 10-digit mobile number. If you're a new member, register here."
+      },
+      hi: {
+        mobile: "मोबाइल नंबर",
+        login: "लॉग इन करें",
+        signup: 'नया सदस्य? <a href="register.html"><b>यहाँ रजिस्टर करें</b></a>',
+        voice: "कृपया अपना 10 अंकों का मोबाइल नंबर दर्ज करें। यदि आप नए सदस्य हैं, तो यहाँ पंजीकरण करें।"
+      },
+      te: {
+        mobile: "మొబైల్ నంబర్",
+        login: "లాగిన్",
+        signup: 'కొత్త సభ్యుడు? <a href="register.html"><b>ఇక్కడ నమోదు చేసుకోండి</b></a>',
+        voice: "దయచేసి మీ 10 అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి. మీరు కొత్త సభ్యుడైతే, ఇక్కడ నమోదు చేసుకోండి."
+      }
+    };
+
+    let selectedLang = localStorage.getItem("selectedLanguage") || "en";
+
+    function changeLanguage(lang) {
+      selectedLang = lang;
+      localStorage.setItem("selectedLanguage", lang);
+      document.getElementById("mobileNumber").placeholder = translations[lang].mobile;
+      document.querySelector(".btn").textContent = translations[lang].login;
+      document.getElementById("signupText").innerHTML = translations[lang].signup;
+      document.getElementById("languageSelector").value = lang;
+    }
+
+    function startVoiceAssistant() {
+      const msg = new SpeechSynthesisUtterance(translations[selectedLang].voice);
+      msg.lang = selectedLang === "hi" ? "hi-IN" : selectedLang === "te" ? "te-IN" : "en-US";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(msg);
+    }
+
+    function redirectToOtp() {
+      const mobile = document.getElementById("mobileNumber").value;
+      if (mobile.length === 10 && !isNaN(mobile)) {
+        window.location.href = "otp1.html";
+      } else {
+        alert("Please enter a valid 10-digit mobile number.");
+      }
+    }
+
+    window.onload = () => {
+      changeLanguage(selectedLang);
+      document.getElementById("mobileNumber").focus();
+    };
+  </script>
+
+</body>
+</html>

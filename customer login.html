@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>f-Mandimitra Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #b0cbe2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 150px;
+      height: 150px;
+    }
+
+    .menu-icon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .input-field {
+      padding: 10px;
+      width: 270px;
+      border: 1px solid #000;
+      border-radius: 10px;
+      font-size: 16px;
+      margin: 15px 0;
+      text-align: center;
+    }
+
+    .btn {
+      width: 270px;
+      padding: 12px;
+      background-color: #004b8d;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background-color: #003366;
+    }
+
+    .signup {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .signup a {
+      font-weight: bold;
+      color: black;
+      text-decoration: none;
+    }
+
+    .corner-icons {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .voice-icon {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    select {
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Logo" class="logo">
+  
+  <!-- <div class="menu-icon">&#9776;</div> -->
+
+  <input type="tel" id="mobileNumber" class="input-field" placeholder="Mobile Number" maxlength="10">
+  <button class="btn" onclick="redirectToOtp()">LOGIN</button>
+
+  <div class="signup">
+    NEW MEMBER? <a href="register.html"><b>Register here</b></a>
+  </div>
+
+  <div class="corner-icons">
+    <select id="languageSelector" onchange="changeLanguage(this.value)">
+      <option value="en">🌐 English</option>
+      <option value="hi">🌐 Hindi</option>
+      <option value="te">🌐 Telugu</option>
+    </select>
+  </div>
+
+  <div class="voice-icon" onclick="startVoiceAssistant()">🎤</div>
+
+  <script>
+    function redirectToOtp() {
+      const mobile = document.getElementById("mobileNumber").value;
+      if (mobile.length === 10 && !isNaN(mobile)) {
+        // Optional: Store mobile in localStorage if needed
+        // localStorage.setItem("mobile", mobile);
+        window.location.href = `otp2.html`;
+      } else {
+        alert("Please enter a valid 10-digit mobile number.");
+      }
+    }
+
+    const translations = {
+      en: {
+        mobile: "Mobile Number",
+        login: "LOGIN",
+        signup: 'NEW MEMBER? <a href="register.html"><b>Register here</b></a>'
+      },
+      hi: {
+        mobile: "मोबाइल नंबर",
+        login: "लॉग इन करें",
+        signup: 'नया सदस्य? <a href="register.html"><b>यहाँ रजिस्टर करें</b></a>'
+      },
+      te: {
+        mobile: "మొబైల్ నంబర్",
+        login: "లాగిన్",
+        signup: 'కొత్త సభ్యుడు? <a href="register.html"><b>ఇక్కడ నమోదు చేసుకోండి</b></a>'
+      }
+    };
+
+    function changeLanguage(lang) {
+      document.getElementById("mobileNumber").placeholder = translations[lang].mobile;
+      document.querySelector(".btn").textContent = translations[lang].login;
+      document.querySelector(".signup").innerHTML = translations[lang].signup;
+      
+      // Save selected language in localStorage
+      localStorage.setItem("selectedLanguage", lang);
+    }
+
+    function startVoiceAssistant() {
+      const lang = localStorage.getItem("selectedLanguage") || "en";
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = translations[lang].mobile + ". " + translations[lang].signup.replace(/<[^>]+>/g, '');
+
+      if (lang === "hi") msg.lang = "hi-IN";
+      else if (lang === "te") msg.lang = "te-IN";
+      else msg.lang = "en-US";
+
+      window.speechSynthesis.cancel(); 
+      window.speechSynthesis.speak(msg);
+    }
+
+    window.onload = () => {
+      // Load language from localStorage or default to 'en'
+      const selectedLang = localStorage.getItem("selectedLanguage") || "en";
+      document.getElementById("languageSelector").value = selectedLang;
+      changeLanguage(selectedLang);
+      document.getElementById("mobileNumber").focus();
+    };
+  </script>
+
+</body>
+</html>

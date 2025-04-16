@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Market Prices - MandiMitra</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #b9d8f0;
+      color: #333;
+      padding: 1rem;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: transparent;
+      margin-bottom: 40px;
+    }
+
+    .logo img {
+      width: 150px;
+      height: auto;
+    }
+
+    .menu {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .btn-group {
+      margin: 20px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-group button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #99ff99; /* default inactive color */
+      color: #333;
+    }
+
+    .btn-group button.active {
+      background-color: #4da6ff !important;
+      color: white !important;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #e6f2ff;
+    }
+
+    td:nth-child(2) {
+      color: red;
+    }
+
+    td:nth-child(3) {
+      color: green;
+    }
+
+    .note {
+      margin-top: 10px;
+      font-style: italic;
+      font-size: 0.9rem;
+    }
+
+    #locationDisplay {
+      font-weight: bold;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .footer-icons {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .footer-icons img {
+      width: 30px;
+    }
+
+    .language-switcher {
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">
+      <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Mandimitra Logo">
+    </div>
+    <!-- <div class="menu">☰</div> -->
+  </header>
+
+  <div id="locationDisplay">📍 Detecting your location...</div>
+
+  <!-- Language Switcher -->
+  <div class="language-switcher" onclick="cycleLanguage()">🌍</div>
+
+  <div class="btn-group">
+    <button class="veg active" onclick="updateTable('vegetables', this)">Vegetables</button>
+    <button class="oil" onclick="updateTable('oil', this)">Oil seeds</button>
+    <button class="pulses" onclick="updateTable('pulses', this)">Pulses</button>
+    <button class="fruits" onclick="updateTable('fruits', this)">Fruits</button>
+  </div>
+
+  <div id="tableContainer">
+    <table>
+      <tr>
+        <th>Varieties</th>
+        <th>Market Price</th>
+        <th>Quantity</th>
+      </tr>
+      <tr><td>Tomato</td><td>₹1700</td><td>100kg</td></tr>
+      <tr><td>Brinjal</td><td>₹1500</td><td>100kg</td></tr>
+      <tr><td>Lady finger</td><td>₹1100</td><td>100kg</td></tr>
+      <tr><td>Onion</td><td>₹2000</td><td>100kg</td></tr>
+      <tr><td>Bell pepper</td><td>₹1300</td><td>100kg</td></tr>
+      <tr><td>Broccoli</td><td>₹7000</td><td>100kg</td></tr>
+      <tr><td>Eggplant</td><td>₹5000</td><td>100kg</td></tr>
+    </table>
+  </div>
+
+  <p class="note">Note:– Rates depend on supply and demand.</p>
+
+  <div class="footer-icons">
+    <!-- <img src="https://img.icons8.com/color/48/google-translate.png" alt="Translate"> -->
+    <img src="https://img.icons8.com/ios-filled/50/microphone.png" alt="Voice">
+  </div>
+
+  <script>
+    const geoAPIKey = 'Your_API_Access_Token'; // Replace with real LocationIQ key
+
+    const translations = {
+      en: {
+        vegetables: "Vegetables",
+        oil: "Oil seeds",
+        pulses: "Pulses",
+        fruits: "Fruits",
+        location: "Detecting your location...",
+        note: "Note:– Rates depend on supply and demand.",
+        items: {
+          vegetables: [
+            ["Tomato", "₹1700", "100kg"],
+            ["Brinjal", "₹1500", "100kg"],
+            ["Lady finger", "₹1100", "100kg"],
+            ["Onion", "₹2000", "100kg"],
+            ["Bell pepper", "₹1300", "100kg"],
+            ["Broccoli", "₹7000", "100kg"],
+            ["Eggplant", "₹5000", "100kg"]
+          ],
+          pulses: [
+            ["Chana (Gram)", "₹5200", "100kg"],
+            ["Masoor (Lentil)", "₹6000", "100kg"],
+            ["Moong", "₹6500", "100kg"],
+            ["Urad", "₹7000", "100kg"],
+            ["Arhar (Tur)", "₹7500", "100kg"]
+          ],
+          oil: [
+            ["Mustard", "₹5200", "100kg"],
+            ["Groundnut", "₹4800", "100kg"],
+            ["Soybean", "₹4600", "100kg"],
+            ["Sesame", "₹6000", "100kg"],
+            ["Sunflower", "₹5300", "100kg"]
+          ],
+          fruits: [
+            ["Banana", "₹900", "100kg"],
+            ["Apple", "₹2500", "100kg"],
+            ["Mango", "₹3000", "100kg"],
+            ["Orange", "₹1800", "100kg"],
+            ["Pineapple", "₹2200", "100kg"]
+          ]
+        }
+      },
+      hi: {
+        vegetables: "सब्ज़ियाँ",
+        oil: "तेल बीज",
+        pulses: "दालें",
+        fruits: "फल",
+        location: "आपका स्थान पहचान रहे हैं...",
+        note: "नोट: दरें आपूर्ति और मांग पर निर्भर करती हैं।",
+        items: {
+          vegetables: [
+            ["टमाटर", "₹1700", "100kg"],
+            ["बैंगन", "₹1500", "100kg"],
+            ["भिंडी", "₹1100", "100kg"],
+            ["प्याज", "₹2000", "100kg"],
+            ["शिमला मिर्च", "₹1300", "100kg"],
+            ["ब्रोकली", "₹7000", "100kg"],
+            ["बैंगन", "₹5000", "100kg"]
+          ],
+          pulses: [
+            ["चना (चना)", "₹5200", "100kg"],
+            ["मसूर (दाल)", "₹6000", "100kg"],
+            ["मूंग", "₹6500", "100kg"],
+            ["उरद", "₹7000", "100kg"],
+            ["अरहर (तूर)", "₹7500", "100kg"]
+          ],
+          oil: [
+            ["सरसों", "₹5200", "100kg"],
+            ["मूंगफली", "₹4800", "100kg"],
+            ["सोयाबीन", "₹4600", "100kg"],
+            ["तिल", "₹6000", "100kg"],
+            ["सूरजमुखी", "₹5300", "100kg"]
+          ],
+          fruits: [
+            ["केला", "₹900", "100kg"],
+            ["सेब", "₹2500", "100kg"],
+            ["आम", "₹3000", "100kg"],
+            ["संतरा", "₹1800", "100kg"],
+            ["अनानास", "₹2200", "100kg"]
+          ]
+        }
+      },
+      te: {
+        vegetables: "కూరగాయలు",
+        oil: "ఆయిల్ పిండాలు",
+        pulses: "పప్పులు",
+        fruits: "పండ్లు",
+        location: "మీ స్థానం గుర్తించబడుతోంది...",
+        note: "గమనిక: ధరలు సరఫరా మరియు డిమాండ్ పై ఆధారపడి ఉంటాయి.",
+        items: {
+          vegetables: [
+            ["టమోటా", "₹1700", "100kg"],
+            ["బంగాళాదుంప", "₹1500", "100kg"],
+            ["బిండి", "₹1100", "100kg"],
+            ["ఉల్లిపాయ", "₹2000", "100kg"],
+            ["బెల్ పిప్పర్", "₹1300", "100kg"],
+            ["బ్రోకోలీ", "₹7000", "100kg"],
+            ["ఎగ్‌ప్లాంట్", "₹5000", "100kg"]
+          ],
+          pulses: [
+            ["చన (గ్రామ్)", "₹5200", "100kg"],
+            ["మసూర్ (పప్పు)", "₹6000", "100kg"],
+            ["మూంగ్", "₹6500", "100kg"],
+            ["ఉరద్", "₹7000", "100kg"],
+            ["అరహర్ (తూర)", "₹7500", "100kg"]
+          ],
+          oil: [
+            ["మస్టర్డ్", "₹5200", "100kg"],
+            ["గ్రౌండ్నట్", "₹4800", "100kg"],
+            ["సోయాబీన్", "₹4600", "100kg"],
+            ["తేల్", "₹6000", "100kg"],
+            ["సూర్యముఖి", "₹5300", "100kg"]
+          ],
+          fruits: [
+            ["అరటిపండు", "₹900", "100kg"],
+            ["ఆపిల్", "₹2500", "100kg"],
+            ["మామిడి", "₹3000", "100kg"],
+            ["సంతరా", "₹1800", "100kg"],
+            ["అనానాసు", "₹2200", "100kg"]
+          ]
+        }
+      }
+    };
+
+    let currentLang = localStorage.getItem("selectedLanguage") || "en";
+    const langList = ["en", "hi", "te"];
+
+    function getLocation() {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        document.getElementById("locationDisplay").innerText = translations[currentLang].location;
+      }
+    }
+
+    function success(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      const url = `https://us1.locationiq.com/v1/reverse?key=${geoAPIKey}&lat=${lat}&lon=${lon}&format=json`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const city = data.address.city || data.address.town || data.address.village || '';
+          const state = data.address.state || '';
+          document.getElementById("locationDisplay").innerText = `📍 ${city}, ${state}`;
+        })
+        .catch(err => {
+          console.error('Location fetch error:', err);
+          document.getElementById("locationDisplay").innerText = "📍 Location unavailable";
+        });
+    }
+
+    function error(err) {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+      document.getElementById("locationDisplay").innerText = "📍 Location permission denied.";
+    }
+
+    function updateTable(category, clickedBtn) {
+      document.querySelectorAll(".btn-group button").forEach(btn => {
+        btn.classList.remove("active");
+        btn.style.backgroundColor = "#99ff99"; // make others green
+        btn.style.color = "#333";
+      });
+
+      clickedBtn.classList.add("active");
+      clickedBtn.style.backgroundColor = "#4da6ff";
+      clickedBtn.style.color = "white";
+
+      let html = `
+        <table>
+          <tr>
+            <th>Varieties</th>
+            <th>Market Price</th>
+            <th>Quantity</th>
+          </tr>`;
+
+      const categories = translations[currentLang].items;
+
+      categories[category].forEach(item => {
+        html += `
+          <tr>
+            <td>${item[0]}</td>
+            <td>${item[1]}</td>
+            <td>${item[2]}</td>
+          </tr>`;
+      });
+
+      html += `</table>`;
+      document.getElementById("tableContainer").innerHTML = html;
+    }
+
+    function cycleLanguage() {
+      const langIndex = (langList.indexOf(currentLang) + 1) % langList.length;
+      currentLang = langList[langIndex];
+      localStorage.setItem("selectedLanguage", currentLang);
+      loadContent();
+    }
+
+    function loadContent() {
+      const lang = translations[currentLang];
+      document.getElementById("locationDisplay").innerText = lang.location;
+      document.querySelector(".veg").innerText = lang.vegetables;
+      document.querySelector(".oil").innerText = lang.oil;
+      document.querySelector(".pulses").innerText = lang.pulses;
+      document.querySelector(".fruits").innerText = lang.fruits;
+      document.querySelector(".note").innerText = lang.note;
+      updateTable('vegetables', document.querySelector('.veg'));
+    }
+
+    // Initial render of items
+    loadContent();
+    getLocation();
+  </script>
+
+</body>
+</html>

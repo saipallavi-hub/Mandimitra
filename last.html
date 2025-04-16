@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Confirmation</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #32a852;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .checkmark {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .checkmark img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .message {
+      color: #000;
+      font-weight: bold;
+      margin-bottom: 50px;
+      text-align: center;
+    }
+
+    .btn {
+      background-color: #2e9b4e;
+      color: black;
+      font-weight: bold;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .btn:hover {
+      background-color: #278b45;
+    }
+  </style>
+</head>
+<body>
+  <div class="checkmark">
+    <img src="https://cdn-icons-png.flaticon.com/512/845/845646.png" alt="Checkmark">
+  </div>
+  <div class="message">Payment will be processed after delivery</div>
+  <button class="btn" onclick="goBack()">Back</button>
+
+  <script>
+    function goBack() {
+      window.location.href = 'buysell.html'; // Replace with your actual starting page
+    }
+
+    // Redirect after 45 seconds (45000 milliseconds)
+    setTimeout(function () {
+      window.location.href = 'buysell.html'; // Replace with your actual starting page
+    }, 5000);
+  </script>
+</body>
+</html>

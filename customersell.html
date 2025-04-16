@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandimitra Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(90deg, #FFCC99, #FDFEFE, #B3D9B3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 120px;
+        }
+        .menu-icon {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .weather {
+            position: absolute;
+            top: 10px;
+            right: 70px;
+            background: yellow;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .main-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .farmer-image {
+            max-width: 400px;
+            height: 700px;
+            margin-left: 10px;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            margin-left: 0px;
+            height: 70px;
+            border-color: black;
+        }
+        .btn {
+            width: 300px;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 15px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            border: none;
+        }
+        .btn-market {
+            background-color: #6887ad;
+        }
+
+        .btn-buy {
+            background-color: #68c68f;
+        }
+
+        .btn-sell {
+            background-color: #ff6347;
+        }
+        .bottom-left {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .bottom-right {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        #greeting {
+            font-size: 12px; /* Adjust size as needed */
+            font-weight: bold;
+            margin-top: 40px;
+        }
+
+        /* Style for the Language Selector */
+        .corner-icons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Logo" class="header">
+    
+    <!-- Language Selector aligned to the top-right corner -->
+    <div class="corner-icons">
+        <select id="languageSelector" onchange="changeLanguage(this.value)">
+            <option value="en">🌐 English</option>
+            <option value="hi">🌐 Hindi</option>
+            <option value="te">🌐 Telugu</option>
+        </select>
+    </div>
+
+    <div id="greeting"></div>
+    
+    <div class="main-content">
+        <div class="buttons">
+            <button class="btn btn-market" onclick="redirectTo('liveprice.html')">MARKET PRICE</button>
+            <button class="btn btn-buy" onclick="redirectTo('categories.html')">BUY</button>
+        </div>
+    </div>
+    
+    <!-- <div class="bottom-left">🌍</div> -->
+    <div class="bottom-right">🎙️</div>
+
+    <script>
+        const translations = {
+            en: {
+                greetingMorning: "Good Morning",
+                greetingAfternoon: "Good Afternoon",
+                greetingEvening: "Good Evening",
+                market: "MARKET PRICE",
+                buy: "BUY",
+                voice: "Welcome to your dashboard. You can check market price or sell your crops."
+            },
+            hi: {
+                greetingMorning: "सुप्रभात",
+                greetingAfternoon: "नमस्कार",
+                greetingEvening: "शुभ संध्या",
+                market: "मंडी भाव",
+                buy: "खरीदें",
+                voice: "डैशबोर्ड में आपका स्वागत है। आप मंडी भाव देख सकते हैं या अपनी फसल बेच सकते हैं।"
+            },
+            te: {
+                greetingMorning: "శుభోదయం",
+                greetingAfternoon: "శుభ మధ్యాహ్నం",
+                greetingEvening: "శుభ సాయంత్రం",
+                market: "మార్కెట్ ధర",
+                buy: "కొనుగోలు",
+                voice: "మీ డాష్‌బోర్డ్‌కి స్వాగతం. మీరు మార్కెట్ ధరను చూడవచ్చు లేదా మీ పంటను అమ్మవచ్చు."
+            }
+        };
+
+        function redirectTo(page) {
+            window.location.href = page;
+        }
+        
+        function updateGreeting() {
+            const now = new Date();
+            const hours = now.getHours();
+            let greeting;
+            if (hours < 12) {
+                greeting = translations[language].greetingMorning;
+            } else if (hours < 18) {
+                greeting = translations[language].greetingAfternoon;
+            } else {
+                greeting = translations[language].greetingEvening;
+            }
+            document.getElementById("greeting").innerText = `${greeting}, ${now.toDateString()}`;
+        }
+
+        let language = "en"; // default language
+        function changeLanguage(lang) {
+            language = lang;
+            localStorage.setItem("selectedLanguage", lang);
+            updateContent(lang);
+        }
+
+        function updateContent(lang) {
+            const marketPriceText = translations[lang].market;
+            const buyText = translations[lang].buy;
+
+            updateGreeting();
+            document.querySelector(".btn-market").textContent = marketPriceText;
+            document.querySelector(".btn-buy").textContent = buyText;
+        }
+
+        window.onload = () => {
+            const selectedLang = localStorage.getItem("selectedLanguage") || "en";
+            document.getElementById("languageSelector").value = selectedLang;
+            updateContent(selectedLang);
+        };
+    </script>
+</body>
+</html>

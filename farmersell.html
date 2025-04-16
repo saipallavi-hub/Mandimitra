@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mandimitra Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(90deg, #FFCC99, #FDFEFE, #B3D9B3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .header {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      width: 120px;
+    }
+
+    .main-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 50px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .btn {
+      width: 300px;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 15px;
+      font-size: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      border: none;
+    }
+
+    .btn-market {
+      background-color: #6887ad;
+    }
+
+    .btn-sell {
+      background-color: #e6a377e0;
+    }
+
+    .bottom-left, .bottom-right {
+      position: absolute;
+      bottom: 15px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .bottom-left {
+      left: 15px;
+    }
+
+    .bottom-right {
+      right: 15px;
+    }
+
+    #greeting {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Logo" class="header">
+
+  <div id="greeting"></div>
+
+  <div class="main-content">
+    <div class="buttons">
+      <button class="btn btn-market" id="marketBtn" onclick="redirectTo('liveprice.html')">MARKET PRICE</button>
+      <button class="btn btn-sell" id="sellBtn" onclick="redirectTo('sell.html')">SELL</button>
+    </div>
+  </div>
+
+  <div class="bottom-left" onclick="cycleLanguage()">🌍</div>
+  <div class="bottom-right" onclick="startVoiceGreeting()">🎙️</div>
+
+  <script>
+    const translations = {
+      en: {
+        greetingMorning: "Good Morning",
+        greetingAfternoon: "Good Afternoon",
+        greetingEvening: "Good Evening",
+        market: "MARKET PRICE",
+        sell: "SELL",
+        voice: "Welcome to your dashboard. You can check market price or sell your crops."
+      },
+      hi: {
+        greetingMorning: "सुप्रभात",
+        greetingAfternoon: "नमस्कार",
+        greetingEvening: "शुभ संध्या",
+        market: "मंडी भाव",
+        sell: "बेचना",
+        voice: "डैशबोर्ड में आपका स्वागत है। आप मंडी भाव देख सकते हैं या अपनी फसल बेच सकते हैं।"
+      },
+      te: {
+        greetingMorning: "శుభోదయం",
+        greetingAfternoon: "శుభ మధ్యాహ్నం",
+        greetingEvening: "శుభ సాయంత్రం",
+        market: "మార్కెట్ ధర",
+        sell: "అమ్మడం",
+        voice: "మీ డాష్‌బోర్డ్‌కి స్వాగతం. మీరు మార్కెట్ ధరను చూడవచ్చు లేదా మీ పంటను అమ్మవచ్చు."
+      }
+    };
+
+    const langList = ["en", "hi", "te"];
+    let langIndex = 0;
+    let currentLang = localStorage.getItem("selectedLanguage") || "en";
+
+    function redirectTo(page) {
+      window.location.href = page;
+    }
+
+    function updateContent() {
+      const now = new Date();
+      const hour = now.getHours();
+      let greet;
+      if (hour < 12) greet = translations[currentLang].greetingMorning;
+      else if (hour < 18) greet = translations[currentLang].greetingAfternoon;
+      else greet = translations[currentLang].greetingEvening;
+
+      document.getElementById("greeting").innerText = `${greet}! ${now.toDateString()}`;
+      document.getElementById("marketBtn").innerText = translations[currentLang].market;
+      document.getElementById("sellBtn").innerText = translations[currentLang].sell;
+    }
+
+    function cycleLanguage() {
+      langIndex = (langIndex + 1) % langList.length;
+      currentLang = langList[langIndex];
+      localStorage.setItem("selectedLanguage", currentLang);
+      updateContent();
+    }
+
+    function startVoiceGreeting() {
+      const msg = new SpeechSynthesisUtterance(translations[currentLang].voice);
+      msg.lang = currentLang === "hi" ? "hi-IN" : currentLang === "te" ? "te-IN" : "en-US";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(msg);
+    }
+
+    window.onload = () => {
+      // Load saved language if available
+      const savedLang = localStorage.getItem("selectedLanguage");
+      if (savedLang && langList.includes(savedLang)) {
+        currentLang = savedLang;
+        langIndex = langList.indexOf(currentLang);
+      }
+      updateContent();
+    };
+  </script>
+</body>
+</html>

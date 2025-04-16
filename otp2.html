@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OTP Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #A5BFD1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      width: 120px;
+    }
+
+    .bottom-left, .bottom-right {
+      position: absolute;
+      bottom: 15px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .bottom-left {
+      left: 15px;
+    }
+
+    .bottom-right {
+      right: 15px;
+    }
+
+    .container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .otp-container {
+      margin: 20px 0;
+    }
+
+    .otp-input {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      font-size: 20px;
+      margin: 5px;
+      border: 2px solid #0044cc;
+      border-radius: 8px;
+    }
+
+    .button {
+      background-color: gray;
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 90%;
+    }
+
+    .button:enabled {
+      background-color: #0044cc;
+    }
+
+    #resend-btn {
+      background-color: #0044cc;
+      color: white;
+      border-radius: 20px;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Mandi Mitra Logo" class="logo">
+
+  <div class="container">
+    <h2 id="otpHeading">Enter OTP</h2>
+    <div class="otp-container">
+      <input type="text" maxlength="1" class="otp-input" id="otp1" oninput="moveToNext(this, 'otp2')">
+      <input type="text" maxlength="1" class="otp-input" id="otp2" oninput="moveToNext(this, 'otp3')">
+      <input type="text" maxlength="1" class="otp-input" id="otp3" oninput="moveToNext(this, 'otp4')">
+      <input type="text" maxlength="1" class="otp-input" id="otp4" oninput="verifyOTP()">
+    </div>
+
+    <p id="noCodeText">Didn’t get the code? <button id="resend-btn" disabled onclick="resendOTP()">Resend</button></p>
+    <p id="timerText">Resend will be available in <span id="timer">60</span>s</p>
+
+    <button class="button" id="continue-btn" disabled onclick="redirectToApp()">Continue</button>
+  </div>
+
+  <div class="bottom-left" onclick="cycleLanguage()">🌍</div>
+  <div class="bottom-right" onclick="startVoice()">🎙️</div>
+
+  <script>
+    const translations = {
+      en: {
+        heading: "Enter OTP",
+        noCode: "Didn’t get the code?",
+        resend: "Resend",
+        timer: "Resend will be available in",
+        continue: "Continue",
+        voice: "Please enter the one time password sent to your number."
+      },
+      hi: {
+        heading: "ओटीपी दर्ज करें",
+        noCode: "कोड नहीं मिला?",
+        resend: "पुनः भेजें",
+        timer: "पुनः भेजने के लिए शेष समय",
+        continue: "जारी रखें",
+        voice: "कृपया आपके नंबर पर भेजा गया ओटीपी दर्ज करें।"
+      },
+      te: {
+        heading: "ఓటీపీ నమోదు చేయండి",
+        noCode: "కోడ్ అందలేదా?",
+        resend: "మళ్లీ పంపండి",
+        timer: "మళ్లీ పంపించడానికి సమయం",
+        continue: "కొనసాగించు",
+        voice: "దయచేసి మీ నంబరుకు పంపిన ఓటీపీని నమోదు చేయండి."
+      }
+    };
+
+    const langList = ["en", "hi", "te"];
+    let langIndex = 0;
+    let currentLang = localStorage.getItem("selectedLanguage") || "en";
+
+    function moveToNext(current, nextId) {
+      if (current.value.length === 1 && nextId) {
+        document.getElementById(nextId).focus();
+      }
+    }
+
+    function verifyOTP() {
+      let otp = "";
+      for (let i = 1; i <= 4; i++) {
+        otp += document.getElementById('otp' + i).value;
+      }
+      if (otp.length === 4) {
+        document.getElementById("continue-btn").disabled = false;
+      }
+    }
+
+    function redirectToApp() {
+      alert("OTP Verified! Redirecting...");
+      window.location.href = "customersell.html";
+    }
+
+    function resendOTP() {
+      alert("OTP Resent!");
+      document.getElementById("resend-btn").disabled = true;
+      startTimer();
+    }
+
+    function startTimer() {
+      let timer = 60;
+      let timerInterval = setInterval(function () {
+        document.getElementById("timer").innerText = timer;
+        timer--;
+        if (timer < 0) {
+          clearInterval(timerInterval);
+          document.getElementById("resend-btn").disabled = false;
+          document.getElementById("timer").innerText = "0";
+        }
+      }, 1000);
+    }
+
+    function updateContent() {
+      const t = translations[currentLang];
+      document.getElementById("otpHeading").innerText = t.heading;
+      document.getElementById("noCodeText").innerHTML = `${t.noCode}? <button id="resend-btn" disabled onclick="resendOTP()">${t.resend}</button>`;
+      document.getElementById("continue-btn").innerText = t.continue;
+      document.getElementById("timerText").innerHTML = `${t.timer} <span id="timer">60</span>s`;
+    }
+
+    function cycleLanguage() {
+      langIndex = (langIndex + 1) % langList.length;
+      currentLang = langList[langIndex];
+      localStorage.setItem("selectedLanguage", currentLang);
+      updateContent();
+    }
+
+    function startVoice() {
+      const msg = new SpeechSynthesisUtterance(translations[currentLang].voice);
+      msg.lang = currentLang === "hi" ? "hi-IN" : currentLang === "te" ? "te-IN" : "en-US";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(msg);
+    }
+
+    window.onload = function () {
+      const saved = localStorage.getItem("selectedLanguage");
+      if (saved && langList.includes(saved)) {
+        currentLang = saved;
+        langIndex = langList.indexOf(saved);
+      }
+      updateContent();
+      startTimer();
+    };
+  </script>
+</body>
+</html>

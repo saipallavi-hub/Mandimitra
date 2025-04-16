@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MandiMitra - Farmers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #a9c5db;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 100px;
+      margin-right: 10px;
+      width: 100px;
+    }
+
+    .menu-icon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      padding: 30px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background-color: #d4e3f0;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card img {
+      width: 250px;
+      height: 150px;
+      border-radius: 10px;
+    }
+
+    .card p {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .lang-btn {
+      font-size: 24px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="MandiMitra Logo">
+    </div>
+    <div class="lang-btn" onclick="cycleLanguage()">🌍</div>
+  </header>
+
+  <h2 style="text-align:center;" id="heading">Farmers</h2>
+
+  <div class="container" id="farmerContainer">
+    <!-- Cards will be injected dynamically -->
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        heading: "Farmers",
+        names: ["Lakshmayya", "Yadagiri", "Satyanarayana", "Venkayya", "Anitha", "Kotayya", "Mahesh", "Sowmya"]
+      },
+      hi: {
+        heading: "किसान",
+        names: ["लक्ष्मैया", "यदगिरी", "सत्यनारायण", "वेंकय्या", "अनीता", "कोटय्या", "महेश", "सौम्या"]
+      },
+      te: {
+        heading: "రైతులు",
+        names: ["లక్ష్మయ్య", "యాదగిరి", "సత్యనారాయణ", "వెంకయ్య", "అనిత", "కోటయ్య", "మహేష్", "సౌమ్య"]
+      }
+    };
+
+    const links = [
+      "laxmiayya.html",
+      "yadagiri.html",
+      "sathyanarayana.html",
+      "venkayya.html",
+      "anitha.html",
+      "kotayya.html",
+      "mahesh.html",
+      "soumya.html"
+    ];
+
+    const images = [
+      "https://th.bing.com/th/id/OIP.nA_yqm1w0Zqp50uQ6YKIGwHaE7?w=248&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+      "https://th.bing.com/th/id/OIP.CkbXn_on9IWNDOCrykJr1QHaE0?w=304&h=198&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+      "https://th.bing.com/th/id/OIP.w4n-jkzLV_vmWKCuMLsWKAHaEJ?w=263&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+      "https://th.bing.com/th/id/OIP.oTK3PB7Pl9_j-jwrXV83ZwHaE8?w=273&h=182&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+      "https://th.bing.com/th/id/OIP.5Bln9DZbTd6_F3P77LrZLQHaEK?w=302&h=187&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+      "https://th.bing.com/th/id/OIP.LUSSH4HlwOV9iSKzJRUWIAHaGJ?w=189&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+      "https://media.istockphoto.com/id/1458193002/photo/happy-smiling-young-farmer-checking-crop-growth-at-farmland-concept-of-successful-agriculture.jpg?s=612x612&w=0&k=20&c=Wb79bG_kZfFXGRigzJpyIuzVzx9c9H4W6DcePaMCmv8=",
+      "https://img.freepik.com/premium-photo/indian-women-farmer-farm-field-isolated_19856-466.jpg"
+    ];
+
+    const langList = ["en", "hi", "te"];
+    let langIndex = 0;
+    let currentLang = localStorage.getItem("selectedLanguage") || "en";
+
+    function renderCards() {
+      const container = document.getElementById("farmerContainer");
+      const langData = translations[currentLang];
+      document.getElementById("heading").innerText = langData.heading;
+      container.innerHTML = "";
+
+      langData.names.forEach((name, i) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.onclick = () => redirectTo(links[i]);
+        card.innerHTML = `<img src="${images[i]}" alt="${name}"><p>${name}</p>`;
+        container.appendChild(card);
+      });
+    }
+
+    function cycleLanguage() {
+      langIndex = (langIndex + 1) % langList.length;
+      currentLang = langList[langIndex];
+      localStorage.setItem("selectedLanguage", currentLang);
+      renderCards();
+    }
+
+    function redirectTo(page) {
+      window.location.href = page;
+    }
+
+    window.onload = () => {
+      if (langList.includes(currentLang)) {
+        langIndex = langList.indexOf(currentLang);
+      }
+      renderCards();
+    };
+  </script>
+</body>
+</html>

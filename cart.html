@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart - MandiMitra</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #b0cbe3;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #b0cbe3;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #333;
+    }
+
+    .logo {
+      height: 60px;
+    }
+
+    .menu {
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    h2 {
+      text-align: center;
+      color: #111;
+      margin: 20px 0 10px;
+    }
+
+    .cart-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .cart-item {
+      background-color: #dfe8f3;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin: 15px 0;
+    }
+
+    .item-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .item-info img {
+      width: 70px;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .item-desc {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .item-price {
+      color: #444;
+      margin-top: 5px;
+      font-weight: bold;
+    }
+
+    .qty-select {
+      margin: 10px 0;
+    }
+
+    select {
+      padding: 6px;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+
+    .cart-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .cart-buttons button {
+      flex: 1;
+      padding: 10px;
+      font-weight: bold;
+      border-radius: 5px;
+      border: 1px solid #333;
+      background-color: #dfe8f3;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .cart-buttons .remove-btn:hover {
+      background-color: #ffdddd;
+    }
+
+    .cart-buttons .buy-btn:hover {
+      background-color: #d4ffd4;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+      padding: 0 20px;
+    }
+
+    .empty-message {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 40px;
+      color: #555;
+    }
+
+    .buy-all {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .buy-all button {
+      background-color: #fff;
+      padding: 12px 20px;
+      font-weight: bold;
+      border: 2px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .buy-all button:hover {
+      background-color: #d4ffd4;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="MandiMitra Logo" class="logo" />
+    <!-- <div class="menu">&#9776;</div> -->
+  </header>
+
+  <h2>🛒 MY CART</h2>
+
+  <div class="cart-container" id="cartContainer"></div>
+  <div class="total" id="totalPrice"></div>
+
+  <div class="buy-all">
+    <button onclick="buyAll()">🛒 BUY ALL</button>
+  </div>
+
+  <script>
+    function loadCart() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const cartContainer = document.getElementById("cartContainer");
+      const totalPriceElement = document.getElementById("totalPrice");
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = `<p class="empty-message">Your cart is empty!</p>`;
+        totalPriceElement.innerHTML = '';
+        return;
+      }
+
+      cartContainer.innerHTML = '';
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const qty = item.qty || 1;
+        total += item.price * qty;
+
+        cartContainer.innerHTML += `
+          <div class="cart-item">
+            <div class="item-info">
+              
+              <div class="item-details">
+                <div class="item-name">${item.name}</div>
+                <div class="item-desc">${item.desc || ''}</div>
+                <div class="item-price">Price: ₹${item.price} x ${qty} = ₹${item.price * qty}</div>
+                <div class="qty-select">
+                  <label for="qty-${index}">Qty:</label>
+                  <select id="qty-${index}" onchange="updateQty(${index}, this.value)">
+                    ${[...Array(10)].map((_, i) => `<option value="${i+1}" ${qty == i+1 ? 'selected' : ''}>${i+1}</option>`).join('')}
+                  </select>
+                </div>
+                <div class="cart-buttons">
+                  <button class="remove-btn" onclick="removeItem(${index})">🗑 REMOVE</button>
+                  <button class="buy-btn" onclick="buyNow(${index})">🛒 BUY NOW</button>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      });
+
+      totalPriceElement.innerHTML = `Total: ₹${total}`;
+    }
+
+    function removeItem(index) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      loadCart();
+    }
+
+    function updateQty(index, qty) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart[index].qty = parseInt(qty);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      loadCart();
+    }
+
+    function buyNow(index) {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const item = cart[index];
+      const qty = item.qty || 1;
+
+      // Send selected item to the Buy Now page
+      window.location.href = `buynow.html?name=${encodeURIComponent(item.name)}&price=${item.price}&qty=${qty}&img=${encodeURIComponent(item.img)}`;
+    }
+
+    function buyAll() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      if (cart.length === 0) {
+        alert("Cart is empty!");
+        return;
+      }
+
+      // Collect all items from the cart
+      const items = cart.map(item => {
+        return `name=${encodeURIComponent(item.name)}&price=${item.price}&qty=${item.qty || 1}&img=${encodeURIComponent(item.img)}`;
+      }).join("&");
+
+      // Redirecting to the Buy Now page with all the items' details
+      window.location.href = `http://127.0.0.1:5500/buynow/index.html?${items}`;
+    }
+
+    window.onload = loadCart;
+  </script>
+
+</body>
+</html>

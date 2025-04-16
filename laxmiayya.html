@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mandimitra</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #a9c3db;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      width: 150px;
+      height: 150px;
+    }
+
+    .menu-icon {
+      font-size: 30px;
+      cursor: pointer;
+      padding: 5px 10px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 10px;
+      font-size: 18px;
+      margin-left: 10px;
+      border-radius: 5px;
+      border: 1px solid #333;
+    }
+
+    .search-box button {
+      margin-left: 10px;
+      padding: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      background: white;
+      border: 2px solid black;
+      border-radius: 5px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: #c5d8e6;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .card img {
+      width: 150px;
+      height: 150px;
+    }
+
+    .card button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      background-color: white;
+      border: 2px solid black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .language-switcher {
+      font-size: 20px;
+      cursor: pointer;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" class="logo" alt="Logo" />
+    <!-- <div class="menu-icon">☰</div> -->
+  </div>
+
+  <!-- Language Switcher -->
+  <div class="language-switcher" onclick="cycleLanguage()">🌍</div>
+
+  <!-- Search Box -->
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search" onkeyup="filterItems()" />
+    <button onclick="clearSearch()">❌</button>
+  </div>
+
+  <!-- Item Grid -->
+  <div class="grid" id="itemsGrid"></div>
+
+  <script>
+    // Translations for static text and item names
+    const translations = {
+      en: {
+        searchPlaceholder: "Search",
+        sellNow: "SELL NOW",
+        items: {
+          Barley: "Barley",
+          Rajma: "Rajma",
+          Banana: "Banana",
+          Ginger: "Ginger"
+        }
+      },
+      hi: {
+        searchPlaceholder: "खोजें",
+        sellNow: "अभी बेचें",
+        items: {
+          Barley: "जौ",
+          Rajma: "राजमा",
+          Banana: "केला",
+          Ginger: "अदरक"
+        }
+      },
+      te: {
+        searchPlaceholder: "శోధన",
+        sellNow: "ఇప్పుడు విక్రయించండి",
+        items: {
+          Barley: "బార్లీ",
+          Rajma: "రాజ్మా",
+          Banana: "కెకళ్ళు",
+          Ginger: "అల్లం"
+        }
+      }
+    };
+
+    let currentLang = localStorage.getItem("selectedLanguage") || "en";
+    const langList = ["en", "hi", "te"];
+
+    // Sample data for items
+    const items = [
+      { name: 'Barley', img: 'https://toppng.com/uploads/preview/barley-png-image-organic-barley-11563212775yxiqmb4dqo.png' },
+      { name: 'Rajma', img: 'https://th.bing.com/th/id/OIP.7yLxS0Ze9gIoGP4xsskFdwHaFj?rs=1&pid=ImgDetMain' },
+      { name: 'Banana', img: 'https://th.bing.com/th/id/OIP.huwrgSOlIniXrXk8ZWOoTQHaE8?rs=1&pid=ImgDetMain' },
+      { name: 'Ginger', img: 'https://img.icons8.com/color/60/000000/ginger.png' }
+    ];
+
+    const itemsGrid = document.getElementById('itemsGrid');
+    
+    // Function to render items dynamically
+    function renderItems(filteredItems) {
+      itemsGrid.innerHTML = '';
+      filteredItems.forEach(item => {
+        const translatedName = translations[currentLang].items[item.name] || item.name;
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${item.img}" alt="${translatedName}" />
+          <h3>${translatedName}</h3>
+          <button onclick="sellItem('${item.name}', '${item.img}')">${translations[currentLang].sellNow}</button>
+        `;
+        itemsGrid.appendChild(card);
+      });
+    }
+
+    // Function to filter items based on search input
+    function filterItems() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = items.filter(item => item.name.toLowerCase().includes(search));
+      renderItems(filtered);
+    }
+
+    // Function to clear search input and render all items
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      renderItems(items);
+    }
+
+    // Function to handle the SELL NOW button click
+    function sellItem(itemName, imageUrl) {
+      // Save item name and image in localStorage
+      localStorage.setItem("selectedItem", itemName);
+      localStorage.setItem("selectedItemImage", imageUrl);
+      // Redirect to the selling page (example: sellitem.html)
+      window.location.href = "sellitem.html"; // Change path if necessary
+    }
+
+    // Function to cycle between languages
+    function cycleLanguage() {
+      const langIndex = (langList.indexOf(currentLang) + 1) % langList.length;
+      currentLang = langList[langIndex];
+      localStorage.setItem("selectedLanguage", currentLang);
+      loadContent();
+    }
+
+    // Function to load content based on current language
+    function loadContent() {
+      const lang = translations[currentLang];
+      document.getElementById('searchInput').placeholder = lang.searchPlaceholder;
+      renderItems(items); // Re-render items with the current language
+    }
+
+    // Initial render of items
+    loadContent();
+
+  </script>
+
+</body>
+</html>

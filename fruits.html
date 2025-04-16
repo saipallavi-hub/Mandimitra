@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fruits - MandiMitra</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #b5cfe6;
+      margin: 0;
+      padding: 0;
+    }
+
+    header, .search-bar {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      height: 60px;
+    }
+
+    .cart-link {
+      font-size: 22px;
+      text-decoration: none;
+      color: black;
+    }
+
+    h2 {
+      margin: 10px 20px;
+    }
+
+    .search-container {
+      display: flex;
+      margin: 0 20px;
+    }
+
+    .search-container input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #888;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .search-container button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 10px;
+    }
+
+    .product {
+      background-color: #dfe8f3;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px;
+      width: 45%;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      position: relative;
+      text-align: center;
+    }
+
+    .product img {
+      width: 130px;
+      height: 130px;
+    }
+
+    .price {
+      font-weight: bold;
+    }
+
+    .cart-icon, .buy-now {
+      margin-top: 10px;
+      display: inline-block;
+      padding: 8px 12px;
+      border: 1px solid #000;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .product .add-cart {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .quantity-input {
+      margin-top: 5px;
+      padding: 5px;
+      width: 80px;
+    }
+
+    .view-all-container {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 20px 20px;
+    }
+
+    .view-all-button {
+      padding: 10px 15px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .product {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Logo" class="logo">
+    <a href="cart.html" class="cart-link">🛒 Cart</a>
+  </header>
+
+  <h2>Fruits</h2>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search fruits...">
+    <button onclick="clearSearch()">❌</button>
+  </div>
+
+  <section class="products" id="productList">
+    <!-- Products will be rendered here -->
+  </section>
+
+  <div class="view-all-container">
+    <button class="view-all-button" onclick="viewAllProducts()" id="viewAllBtn">View All</button>
+  </div>
+
+  <script>
+    const fruits = [
+      { name: 'Apple', price: 150, img: 'https://th.bing.com/th/id/OIP.XprgHSCfPgHBpfQBBfAWqwHaFb?rs=1&pid=ImgDetMain' },
+      { name: 'Watermelon', price: 60, img: 'https://th.bing.com/th/id/OIP.OMwe8I-SYpwBbXfwLtFcngHaEo?w=284&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7' },
+      { name: 'Orange', price: 90, img: 'https://thumbs.dreamstime.com/b/orange-fruit-22884921.jpg' },
+      { name: 'Mango', price: 120, img: 'https://panchanifarm.com/wp-content/uploads/2016/04/Panchani-Kesar-Mango-819x1024.png' },
+      { name: 'Pineapple', price: 80, img: 'https://th.bing.com/th/id/OIP.87bLJbbi8rVlLX4iOzpjrgHaJQ?rs=1&pid=ImgDetMain' },
+      { name: 'Strawberry', price: 200, img: 'https://th.bing.com/th/id/OIP.3RWmYxe3Oi8OPE6XjhpIYQHaFV?rs=1&pid=ImgDetMain' },
+      { name: 'Grapes', price: 110, img: 'https://th.bing.com/th/id/OIP.gCJ5dnnCX57IRQE3uBCdygHaE7?rs=1&pid=ImgDetMain' },
+      { name: 'Papaya', price: 70, img: 'https://th.bing.com/th/id/OIP.zFAXIEf2hec2on2FLpgAfwHaE8?rs=1&pid=ImgDetMain' }
+    ];
+
+    let showingAll = false;
+    const productList = document.getElementById('productList');
+
+    function renderProducts(items) {
+      productList.innerHTML = '';
+      items.forEach(item => {
+        productList.innerHTML += `
+          <div class="product">
+            <span class="add-cart" onclick='addToCartWithQty("${item.name}", ${item.price}, this)'>🛒</span>
+            <img src="${item.img}" alt="${item.name}" />
+            <h3>${item.name}</h3>
+            <p class="price">₹${item.price}/kg</p>
+            <input type="number" min="1" placeholder="Qty (kg)" class="quantity-input" />
+            <button class="buy-now" onclick='buyNowWithQty("${item.name}", ${item.price}, this)'>BUY NOW</button>
+          </div>`;
+      });
+    }
+
+    // Show initial 4 fruits
+    renderProducts(fruits.slice(0, 4));
+
+    function viewAllProducts() {
+      showingAll = true;
+      renderProducts(fruits);
+      document.getElementById('viewAllBtn').style.display = 'none';
+    }
+
+    function addToCartWithQty(name, price, el) {
+      const qtyInput = el.parentElement.querySelector('.quantity-input');
+      const qty = parseFloat(qtyInput.value);
+      if (!qty || qty <= 0) {
+        alert("Please enter a valid quantity.");
+        return;
+      }
+      const product = { name, price, qty };
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(product);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert(`${name} (${qty}kg) added to cart!`);
+    }
+
+    function buyNowWithQty(name, price, el) {
+      const qtyInput = el.parentElement.querySelector('.quantity-input');
+      const qty = parseFloat(qtyInput.value);
+      if (!qty || qty <= 0) {
+        alert("Please enter a valid quantity.");
+        return;
+      }
+      const url = `buynow.html?name=${encodeURIComponent(name)}&price=${price}&qty=${qty}`;
+      window.location.href = url;
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      if (showingAll) {
+        renderProducts(fruits);
+      } else {
+        renderProducts(fruits.slice(0, 4));
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      const search = this.value.toLowerCase();
+      const filtered = fruits.filter(c => c.name.toLowerCase().includes(search));
+      renderProducts(filtered);
+    });
+  </script>
+
+</body>
+</html>

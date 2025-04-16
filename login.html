@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mandimitra Login</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #b0cbe2;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 150px;
+      height: 150px;
+    }
+
+    .user-icon {
+      font-size: 50px;
+      color: #4b3869;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background-color: #004b8d;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      margin: 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      width: 250px;
+      font-size: 16px;
+    }
+
+    .btn:hover {
+      background-color: #003366;
+    }
+
+    .or-text {
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .signup {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .signup a {
+      font-weight: bold;
+      color: black;
+      text-decoration: none;
+    }
+
+    .corner-icons {
+      position: absolute;
+      bottom: 15px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 22px;
+      color: black;
+    }
+
+    select {
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Logo" class="logo">
+
+  <div class="container">
+    <div class="user-icon">👤</div>
+
+    <button class="btn" onclick="goToPage('farmerlogin.html')" id="farmerBtn">Farmer Login</button>
+    <div class="or-text" id="orText">OR</div>
+    <button class="btn" onclick="goToPage('customer login.html')" id="customerBtn">Customer Login</button>
+
+    <div class="signup" id="signupText">
+      DON'T HAVE AN ACCOUNT? <a href="register.html" id="signupLink">SIGN UP</a>
+    </div>
+  </div>
+
+  <div class="corner-icons">
+    <div>
+      <select id="languageSelector" onchange="changeLanguage(this.value)">
+        <option value="en">🌐 English</option>
+        <option value="hi">🌐 Hindi</option>
+        <option value="te">🌐 Telugu</option>
+      </select>
+    </div>
+    <button class="icon-btn" onclick="startVoiceAssistant()">🎤</button>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        farmer: "Farmer Login",
+        customer: "Customer Login",
+        or: "OR",
+        signupText: "DON'T HAVE AN ACCOUNT?",
+        signupLink: "SIGN UP",
+        voiceText: "Welcome to Mandimitra. Please choose Farmer Login or Customer Login. If you're new, click Sign Up."
+      },
+      hi: {
+        farmer: "किसान लॉगिन",
+        customer: "ग्राहक लॉगिन",
+        or: "या",
+        signupText: "खाता नहीं है?",
+        signupLink: "साइन अप करें",
+        voiceText: "मंडिमित्र में आपका स्वागत है। कृपया किसान या ग्राहक लॉगिन चुनें। नया उपयोगकर्ता साइन अप करें।"
+      },
+      te: {
+        farmer: "రైతు లాగిన్",
+        customer: "గ్రాహక లాగిన్",
+        or: "లేదా",
+        signupText: "ఖాతా లేదా?",
+        signupLink: "సైన్ అప్",
+        voiceText: "మండి మిత్రలోకి స్వాగతం. రైతు లాగిన్ లేదా గ్రాహక లాగిన్ ఎంచుకోండి. మీరు కొత్త అయితే, సైన్ అప్ చేయండి."
+      }
+    };
+
+    let selectedLang = localStorage.getItem('selectedLanguage') || 'en';
+
+    function changeLanguage(lang) {
+      selectedLang = lang;
+      localStorage.setItem('selectedLanguage', lang);
+      applyTranslation(lang);
+    }
+
+    function applyTranslation(lang) {
+      const t = translations[lang];
+      document.getElementById("farmerBtn").textContent = t.farmer;
+      document.getElementById("customerBtn").textContent = t.customer;
+      document.getElementById("orText").textContent = t.or;
+      document.getElementById("signupText").childNodes[0].nodeValue = t.signupText + " ";
+      document.getElementById("signupLink").textContent = t.signupLink;
+      document.getElementById("languageSelector").value = lang;
+    }
+
+    function startVoiceAssistant() {
+      const msg = new SpeechSynthesisUtterance(translations[selectedLang].voiceText);
+      msg.lang = selectedLang === "hi" ? "hi-IN" : selectedLang === "te" ? "te-IN" : "en-US";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(msg);
+    }
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    window.onload = () => {
+      applyTranslation(selectedLang);
+    };
+  </script>
+
+</body>
+</html>

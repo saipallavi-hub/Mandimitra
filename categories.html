@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mandimitra Categories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #b0cbe3;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+    }
+
+    .logo img {
+      height: 100px;
+    }
+
+    .cart-icon {
+      font-size: 1.8rem;
+      cursor: pointer;
+      margin-top: -10px; /* moved slightly up */
+    }
+
+    main {
+      padding: 1rem;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 0.5rem; /* Reduce horizontal gap */
+      row-gap: 1rem;      /* Keep vertical spacing */  /* Constrain grid width */
+      margin: 0 auto;     /* Center the grid */
+    }
+
+    .card {
+      background: #dfe8f3;
+      padding: 1rem;
+      text-align: center;
+      border-radius: 25px;
+      box-shadow: 0 4px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+      width: 50%; /* New width, adjust as needed */
+      margin: 0 auto; /* Center the card within the grid column */
+    }
+
+    .card img {
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+    }
+
+    .card p {
+      margin: 0.5rem 0;
+      font-weight: bold;
+    }
+
+    .card button {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: #2d6cdf;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 400px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bottom-left {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Mandimitra Logo">
+    </div>
+    <div class="cart-icon" onclick="goToCart()">🛒</div>
+  </header>
+
+  <main>
+    <h2 id="categoryHeading">Categories</h2>
+    <div class="grid">
+      <div class="card" onclick="goToPage('cereals.html')">
+        <img src="https://img.freepik.com/free-photo/set-different-types-rice-cereals-wooden-bowls_266247-2549.jpg?size=626&ext=jpg" alt="Cereals">
+        <p id="cereals">Cereals (Grains)</p>
+      </div>
+
+      <div class="card" onclick="goToPage('fruits.html')">
+        <img src="https://th.bing.com/th/id/OIP.Twf-tQtqbfpNzNwqK8c3PQHaFC?rs=1&pid=ImgDetMain" alt="Fruits">
+        <p id="fruits">Fruits</p>
+      </div>
+
+      <div class="card" onclick="goToPage('pulses.html')">
+        <img src="https://th.bing.com/th/id/OIP.1dSPylENJO-MLThfVNeu5gHaE7?rs=1&pid=ImgDetMain" alt="Pulses">
+        <p id="pulses">Pulses (Legumes)</p>
+      </div>
+
+      <div class="card" onclick="goToPage('vegetables.html')">
+        <img src="https://th.bing.com/th/id/OIP.DIWO9z7rNdoiffsdr_4_NgHaE8?rs=1&pid=ImgDetMain" alt="Vegetables">
+        <p id="vegetables">Vegetables</p>
+      </div>
+
+      <div class="card" onclick="goToPage('oilseeds.html')">
+        <img src="https://th.bing.com/th/id/OIP.mLuTwNn8xiJwHxjNhfgx7QHaEK?rs=1&pid=ImgDetMain" alt="Oilseeds">
+        <p id="oilseeds">Oilseeds</p>
+      </div>
+
+      <div class="card" onclick="goToPage('spiecs.html')">
+        <img src="https://th.bing.com/th/id/OIP.Mm6wST_Ed7X1UtLdpnv3lwAAAA?w=400&h=400&rs=1&pid=ImgDetMain" alt="Spices">
+        <p id="spices">Spices & Condiments</p>
+      </div>
+    </div>
+  </main>
+
+  <div class="bottom-left" onclick="cycleLanguage()">🌍</div>
+
+  <script>
+    const translations = {
+      en: {
+        categoryHeading: "Categories",
+        cereals: "Cereals (Grains)",
+        fruits: "Fruits",
+        pulses: "Pulses (Legumes)",
+        vegetables: "Vegetables",
+        oilseeds: "Oilseeds",
+        spices: "Spices & Condiments",
+      },
+      hi: {
+        categoryHeading: "वर्गीकरण",
+        cereals: "अनाज (धान्य)",
+        fruits: "फल",
+        pulses: "दालें (फलियां)",
+        vegetables: "सब्जियां",
+        oilseeds: "तेलबीज",
+        spices: "मसाले और कंडिमेंट्स",
+      },
+      te: {
+        categoryHeading: "వర్గాలు",
+        cereals: "ధాన్యాలు (ధాన్యాలు)",
+        fruits: "పండ్లు",
+        pulses: "పప్పులు (పప్పులు)",
+        vegetables: "కూరగాయలు",
+        oilseeds: "నూనెగింజలు",
+        spices: "మసాలాలు మరియు కండిమెంట్స్",
+      }
+    };
+
+    const langList = ["en", "hi", "te"];
+    let langIndex = 0;
+    let currentLang = localStorage.getItem("selectedLanguage") || "en";
+
+    function updateContent() {
+      document.getElementById("categoryHeading").innerText = translations[currentLang].categoryHeading;
+      document.getElementById("cereals").innerText = translations[currentLang].cereals;
+      document.getElementById("fruits").innerText = translations[currentLang].fruits;
+      document.getElementById("pulses").innerText = translations[currentLang].pulses;
+      document.getElementById("vegetables").innerText = translations[currentLang].vegetables;
+      document.getElementById("oilseeds").innerText = translations[currentLang].oilseeds;
+      document.getElementById("spices").innerText = translations[currentLang].spices;
+    }
+
+    function cycleLanguage() {
+      langIndex = (langIndex + 1) % langList.length;
+      currentLang = langList[langIndex];
+      localStorage.setItem("selectedLanguage", currentLang);
+      updateContent();
+    }
+
+    function goToCart() {
+      window.location.href = "cart.html";
+    }
+
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    window.onload = () => {
+      const savedLang = localStorage.getItem("selectedLanguage");
+      if (savedLang && langList.includes(savedLang)) {
+        currentLang = savedLang;
+      }
+      updateContent();
+    };
+  </script>
+
+</body>
+</html>

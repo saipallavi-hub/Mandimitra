@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandimitra f-Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b0cbe2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            padding-top: 50px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 170px;
+            height: 170px;
+        }
+
+        .menu-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #004b8d;
+            border-radius: 25px;
+            font-size: 16px;
+            text-align: center;
+            background-color: white;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #004b8d;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background-color: #003366;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Logo" class="logo">
+    
+    <div class="menu-icon" onclick="cycleLanguage()">🌍</div>
+
+    <div class="form-container">
+        <input type="text" id="name" class="input-field" placeholder="Name">
+        <input type="tel" id="mobile" class="input-field" placeholder="Mobile Number">
+        <input type="text" id="address" class="input-field" placeholder="Address">
+
+        <select id="state" class="input-field" onchange="loadDistricts()">
+            <option value="">Select State</option>
+        </select>
+
+        <select id="district" class="input-field" onchange="loadVillages()">
+            <option value="">Select District</option>
+        </select>
+
+        <select id="village" class="input-field">
+            <option value="">Select Village</option>
+        </select>
+
+        <input type="text" id="pincode" class="input-field" placeholder="Pin code">
+        <button class="btn" onclick="registerUser()">REGISTER</button>
+    </div>
+
+    <script>
+        // Translations for states and districts
+        const stateData = {
+            en: {
+                "Andhra Pradesh": { "Guntur": ["Tenali", "Mangalagiri"] },
+                "Arunachal Pradesh": { "Itanagar": ["Naharlagun"] },
+                "Assam": { "Guwahati": ["Dispur", "Khanapara"] },
+                "Bihar": { "Patna": ["Danapur", "Phulwari"] },
+                "Goa": { "North Goa": ["Mapusa", "Panaji"] },
+                "Gujarat": { "Ahmedabad": ["Maninagar", "Navrangpura"] },
+                // Other states...
+            },
+            hi: {
+                "आंध्र प्रदेश": { "गुंटूर": ["तेनाली", "मंगलागिरी"] },
+                "अरुणाचल प्रदेश": { "ईटानगर": ["नाहरलागुन"] },
+                "असम": { "गुवाहाटी": ["दिसपुर", "खानापारा"] },
+                "बिहार": { "पटना": ["दानापुर", "फूलवारी"] },
+                "गोवा": { "उत्तर गोवा": ["मापुसा", "पणजी"] },
+                "गुजरात": { "अहमदाबाद": ["मणिनगर", "नवरंगपुरा"] },
+                // Other states...
+            },
+            te: {
+                "ఆంధ్రప్రదేశ్": { "గుంటూరు": ["తెనాలి", "మంగళగిరి"] },
+                "అరుణాచల్ ప్రదేశ్": { "ఇటానగర్": ["నాహర్లగున్"] },
+                "అస్సాం": { "గువాహటి": ["దిస్పూర్", "ఖానపారా"] },
+                "బిహార్": { "పట్నా": ["దానాపూర్", "ఫూల్వారి"] },
+                "గోవా": { "ఉత్తర గోవా": ["మాపుసా", "పణజి"] },
+                "గుజరాత్": { "అహ్మదాబాద్": ["మనినగర్", "నవరంగపురా"] },
+                // Other states...
+            }
+        };
+
+        // Translations for static text
+        const translations = {
+            en: {
+                name: "Name",
+                mobile: "Mobile Number",
+                address: "Address",
+                state: "Select State",
+                district: "Select District",
+                village: "Select Village",
+                pincode: "Pin code",
+                registerBtn: "REGISTER",
+                alert: "Please fill in all fields.",
+                validMobile: "Enter a valid 10-digit mobile number.",
+                successMsg: "Registration successful!"
+            },
+            hi: {
+                name: "नाम",
+                mobile: "मोबाइल नंबर",
+                address: "पता",
+                state: "राज्य चुनें",
+                district: "जिला चुनें",
+                village: "गाँव चुनें",
+                pincode: "पिन कोड",
+                registerBtn: "रजिस्टर करें",
+                alert: "कृपया सभी फ़ील्ड भरें।",
+                validMobile: "10 अंकों का मोबाइल नंबर दर्ज करें।",
+                successMsg: "रजिस्ट्रेशन सफल!"
+            },
+            te: {
+                name: "పేరు",
+                mobile: "మొబైల్ నెంబర్",
+                address: "చిరునామా",
+                state: "రాష్ట్రాన్ని ఎంచుకోండి",
+                district: "జిల్లాను ఎంచుకోండి",
+                village: "పల్లెలను ఎంచుకోండి",
+                pincode: "పిన్ కోడ్",
+                registerBtn: "పరీక్షించండి",
+                alert: "దయచేసి అన్ని ఫీల్డ్స్‌ను పూర్తి చేయండి.",
+                validMobile: "సరైన 10 అంకెల మొబైల్ నంబర్ ఎంటర్ చేయండి.",
+                successMsg: "నమోదు విజయవంతం!"
+            }
+        };
+
+        let currentLang = localStorage.getItem("selectedLanguage") || "en";
+        const langList = ["en", "hi", "te"];
+
+        function cycleLanguage() {
+            const langIndex = (langList.indexOf(currentLang) + 1) % langList.length;
+            currentLang = langList[langIndex];
+            localStorage.setItem("selectedLanguage", currentLang);
+            loadContent();
+        }
+
+        function loadContent() {
+            const lang = translations[currentLang];
+            document.getElementById("name").placeholder = lang.name;
+            document.getElementById("mobile").placeholder = lang.mobile;
+            document.getElementById("address").placeholder = lang.address;
+            document.getElementById("pincode").placeholder = lang.pincode;
+            document.querySelector(".btn").textContent = lang.registerBtn;
+
+            loadStates();
+        }
+
+        function loadStates() {
+            const stateSelect = document.getElementById("state");
+            stateSelect.innerHTML = `<option value="">${translations[currentLang].state}</option>`;
+            Object.keys(stateData[currentLang]).forEach(state => {
+                let option = document.createElement("option");
+                option.value = state;
+                option.textContent = state;
+                stateSelect.appendChild(option);
+            });
+        }
+
+        function loadDistricts() {
+            const stateSelect = document.getElementById("state").value;
+            const districtSelect = document.getElementById("district");
+            districtSelect.innerHTML = `<option value="">${translations[currentLang].district}</option>`;
+            document.getElementById("village").innerHTML = `<option value="">${translations[currentLang].village}</option>`;
+
+            if (stateSelect && stateData[currentLang][stateSelect]) {
+                Object.keys(stateData[currentLang][stateSelect]).forEach(district => {
+                    let option = document.createElement("option");
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+            }
+        }
+
+        function loadVillages() {
+            const stateSelect = document.getElementById("state").value;
+            const districtSelect = document.getElementById("district").value;
+            const villageSelect = document.getElementById("village");
+            villageSelect.innerHTML = `<option value="">${translations[currentLang].village}</option>`;
+
+            if (stateSelect && districtSelect && stateData[currentLang][stateSelect][districtSelect]) {
+                stateData[currentLang][stateSelect][districtSelect].forEach(village => {
+                    let option = document.createElement("option");
+                    option.value = village;
+                    option.textContent = village;
+                    villageSelect.appendChild(option);
+                });
+            }
+        }
+
+        function registerUser() {
+            const lang = translations[currentLang];
+            const name = document.getElementById("name").value;
+            const mobile = document.getElementById("mobile").value;
+            const address = document.getElementById("address").value;
+            const state = document.getElementById("state").value;
+            const district = document.getElementById("district").value;
+            const village = document.getElementById("village").value;
+            const pincode = document.getElementById("pincode").value;
+
+            if (!name || !mobile || !address || !state || !district || !village || !pincode) {
+                alert(lang.alert);
+                return;
+            }
+
+            if (mobile.length !== 10 || isNaN(mobile)) {
+                alert(lang.validMobile);
+                return;
+            }
+
+            alert(lang.successMsg);
+        }
+
+        loadContent(); // Initialize with current language
+    </script>
+</body>
+</html>

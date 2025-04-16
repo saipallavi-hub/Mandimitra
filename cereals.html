@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cereals - MandiMitra</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #b5cfe6;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      padding: 10px 20px;
+    }
+
+    .logo {
+      height: 60px;
+    }
+
+    .cart-link {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      font-size: 22px;
+      text-decoration: none;
+      color: black;
+      z-index: 1000;
+    }
+
+    .language-selector {
+      position: fixed;
+      bottom: 15px;
+      left: 20px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    h2 {
+      margin: 10px 20px;
+    }
+
+    .search-container {
+      display: flex;
+      margin: 0 20px;
+    }
+
+    .search-container input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #888;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .search-container button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 10px;
+    }
+
+    .product {
+      background-color: #dfe8f3;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px;
+      width: 45%;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      position: relative;
+      text-align: center;
+    }
+
+    .product img {
+      width: 150px;
+      height: 150px;
+    }
+
+    .price {
+      font-weight: bold;
+    }
+
+    .buy-now {
+      margin-top: 10px;
+      display: inline-block;
+      padding: 8px 12px;
+      border: 1px solid #000;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .product .add-cart {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .quantity-input {
+      margin-top: 5px;
+      padding: 5px;
+      width: 80px;
+    }
+
+    .view-all-container {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 20px 20px;
+    }
+
+    .view-all-button {
+      padding: 10px 15px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .product {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://res.cloudinary.com/dtnmwdkou/image/upload/v1744215563/Untitled_design-removebg-preview_g1gy1h.png" alt="Logo" class="logo">
+  </header>
+
+  <a href="cart.html" class="cart-link">🛒</a>
+  <div class="language-selector" onclick="cycleLanguage()">🌍</div>
+
+  <h2 id="pageTitle">Cereals (Grains)</h2>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search cereals...">
+    <button onclick="clearSearch()">❌</button>
+  </div>
+
+  <section class="products" id="productList">
+    <!-- Products will be rendered here -->
+  </section>
+
+  <div class="view-all-container">
+    <button class="view-all-button" onclick="viewAllProducts()" id="viewAllBtn">View All</button>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        pageTitle: "Cereals (Grains)",
+        searchPlaceholder: "Search cereals...",
+        viewAllBtn: "View All",
+        cartBtn: "🛒 Cart",
+        addToCartBtn: "Add to Cart",
+        buyNowBtn: "BUY NOW",
+        alertQuantity: "Please enter a valid quantity.",
+        alertAddedToCart: (name, qty) => `${name} (${qty}kg) added to cart!`,
+      },
+      hi: {
+        pageTitle: "अनाज (धान)",
+        searchPlaceholder: "अनाज खोजें...",
+        viewAllBtn: "सभी देखें",
+        cartBtn: "🛒 कार्ट",
+        addToCartBtn: "कार्ट में जोड़ें",
+        buyNowBtn: "अभी खरीदें",
+        alertQuantity: "कृपया एक वैध मात्रा दर्ज करें।",
+        alertAddedToCart: (name, qty) => `${name} (${qty}kg) कार्ट में जोड़ लिया गया!`,
+      },
+      te: {
+        pageTitle: "పంటలు (అనవలు)",
+        searchPlaceholder: "పంటలు వెతకండి...",
+        viewAllBtn: "అన్ని చూడండి",
+        cartBtn: "🛒 కార్ట్",
+        addToCartBtn: "కార్టులో జోడించండి",
+        buyNowBtn: "ఇప్పుడే కొనండి",
+        alertQuantity: "దయచేసి సరైన పరిమాణాన్ని నమోదు చేయండి.",
+        alertAddedToCart: (name, qty) => `${name} (${qty}kg) కార్టులో జోడించబడింది!`,
+      }
+    };
+
+    let currentLang = localStorage.getItem("selectedLanguage") || "en";
+    const langList = ["en", "hi", "te"];
+
+    const cereals = [
+      { name: { en: 'Rice', hi: 'चावल', te: 'బియ్యం' }, price: 100, img: 'https://th.bing.com/th/id/OIP.X3fWUNK7Q6C8BTLnP0GANAHaE7?w=282&h=187&c=7&r=0&o=5&dpr=1.3&pid=1.7' },
+      { name: { en: 'Maize (Corn)', hi: 'मक्का (कॉर्न)', te: 'మక్కా (భాత)' }, price: 100, img: 'https://wallpapercave.com/wp/wp3094861.png' },
+      { name: { en: 'Wheat', hi: 'गहुँ', te: 'గోధుమ' }, price: 100, img: 'https://th.bing.com/th/id/OIP.5P-JVc_PgOoMSbJmKQhJrQHaJt?w=155&h=204&c=7&r=0&o=5&dpr=1.3&pid=1.7' },
+      { name: { en: 'Barley', hi: 'जौ', te: 'జొన్న' }, price: 100, img: 'https://th.bing.com/th/id/OIP.J1Ga9gs7LwhZyqsBbk4utQHaIz?w=158&h=188&c=7&r=0&o=5&dpr=1.3&pid=1.7' },
+      { name: { en: 'Oats', hi: 'ओट्स', te: 'ఓట్స్' }, price: 120, img: 'https://th.bing.com/th/id/OIP.XEgZLwVCK0vGETnVeQT8RwAAAA?rs=1&pid=ImgDetMain' },
+      { name: { en: 'Millet', hi: 'बाजरा', te: 'బాజ్రా' }, price: 90, img: 'https://th.bing.com/th/id/OIP.qrb0Sa4WrSWcxOp2swPolwHaEU?rs=1&pid=ImgDetMain' },
+      { name: { en: 'Sorghum', hi: 'ज्वार', te: 'జొన్న' }, price: 95, img: 'https://th.bing.com/th/id/OIP.aejpnrOggxumFWc-HY_HYQHaHa?w=183&h=183&c=7&r=0&o=5&dpr=1.3&pid=1.7' },
+      { name: { en: 'Quinoa', hi: 'क्विनोआ', te: 'క్వినోవా' }, price: 150, img: 'https://th.bing.com/th/id/OIP.2BorYAr0gMdbcUcVpqMoxgHaE8?rs=1&pid=ImgDetMain' }
+    ];
+
+    let showingAll = false;
+    const productList = document.getElementById('productList');
+
+    function renderProducts(items) {
+      productList.innerHTML = '';
+      items.forEach(item => {
+        const name = item.name[currentLang];
+        productList.innerHTML += `
+          <div class="product">
+            <span class="add-cart" onclick='addToCartWithQty("${name}", ${item.price}, this)'>🛒</span>
+            <img src="${item.img}" alt="${name}" />
+            <h3>${name}</h3>
+            <p class="price">₹${item.price}/kg</p>
+            <input type="number" min="1" placeholder="Qty (kg)" class="quantity-input" />
+            <button class="buy-now" onclick='buyNowWithQty("${name}", ${item.price}, this)'>${translations[currentLang].buyNowBtn}</button>
+          </div>`;
+      });
+    }
+
+    renderProducts(cereals.slice(0, 4));
+
+    function viewAllProducts() {
+      showingAll = true;
+      renderProducts(cereals);
+      document.getElementById('viewAllBtn').style.display = 'none';
+    }
+
+    function addToCartWithQty(name, price, el) {
+      const qtyInput = el.parentElement.querySelector('.quantity-input');
+      const qty = parseFloat(qtyInput.value);
+      if (!qty || qty <= 0) {
+        alert(translations[currentLang].alertQuantity);
+        return;
+      }
+      const product = { name, price, qty };
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push(product);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert(translations[currentLang].alertAddedToCart(name, qty));
+    }
+
+    function buyNowWithQty(name, price, el) {
+      const qtyInput = el.parentElement.querySelector('.quantity-input');
+      const qty = parseFloat(qtyInput.value);
+      if (!qty || qty <= 0) {
+        alert(translations[currentLang].alertQuantity);
+        return;
+      }
+      const url = `buynow.html?name=${encodeURIComponent(name)}&price=${price}&qty=${qty}`;
+      window.location.href = url;
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      if (showingAll) {
+        renderProducts(cereals);
+      } else {
+        renderProducts(cereals.slice(0, 4));
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      const search = this.value.toLowerCase();
+      const filtered = cereals.filter(c => c.name[currentLang].toLowerCase().includes(search));
+      renderProducts(filtered);
+    });
+
+    function cycleLanguage() {
+      currentLang = langList[(langList.indexOf(currentLang) + 1) % langList.length];
+      localStorage.setItem("selectedLanguage", currentLang);
+      document.getElementById('pageTitle').innerText = translations[currentLang].pageTitle;
+      document.getElementById('viewAllBtn').innerText = translations[currentLang].viewAllBtn;
+      renderProducts(cereals.slice(0, 4));
+    }
+  </script>
+
+</body>
+</html>
+\
